@@ -1,0 +1,390 @@
+\documentclass[10pt]{beamer}
+
+\usetheme[progressbar=frametitle]{metropolis}
+\usepackage{appendixnumberbeamer}
+\usepackage[utf8]{inputenc} %Required for encoding text
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{xspace}
+
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings,skins}
+%\lstset{basicstyle=\ttfamily\color{white},
+%  showstringspaces=false,
+%  xleftmargin = 0.5cm,
+%  commentstyle=\color{red},
+%  keywordstyle=\color{blue},
+%  rulecolor=\color{white},
+%  frameshape={RYR}{Y}{Y}{RYR},
+%  backgroundcolor=\color{black},
+%}
+\lstdefinestyle{mystyle}{
+     basicstyle=\ttfamily\color{white},
+     language=bash,
+     tabsize=1,
+     keywordstyle=\color{blue}\bf,
+     showstringspaces=false,
+     morekeywords={mount, umount, ls, 
+	 		cat, adduser, chown, chgrp, init, fuser}
+ }
+\newtcblisting{mylisting}{
+      enhanced,                             %%% needed for shadow
+      arc=2mm,
+      top=0mm,
+      bottom=0mm,
+      left=0mm,
+      right=0mm,
+      boxrule=0pt,
+      colback=black,
+      %shadow={5mm}{-3mm}{0mm}{fill=black!50!white,opacity=0.5},             %%% here for shadow  and adjust as you like
+      listing only,
+      listing options={style=mystyle},
+      hbox
+}
+
+\newcommand{\linux}{\textbf{\textsc{Linux}}\xspace}
+\newcommand{\param}[1]{\textcolor{blue}{#1}}
+
+\addtobeamertemplate{section page}{}{
+  \centering
+  \begin{minipage}{22em}
+  \tableofcontents[sectionstyle=hide/hide,hideothersubsections]
+  \end{minipage}\par
+}
+\title{Shell : commandes UNIX et programmation système}
+\subtitle{Cours d'Outils de Programmation}
+% \date{\today}
+\date{}
+\author{Bousbaa Imad Eddine}
+\institute{Université des Sciences et de la Technologie de Houari Boumediène}
+% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Plan}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{}
+
+\begin{frame}[fragile]{Objectifs}
+Apprendre à utiliser les commandes UNIX (bash).
+Apprendre à automatiser des tâches en écrivant des scripts.\\
+
+\end{frame}
+
+\section{Shell}
+
+\begin{frame}{Objectifs de shell}
+\begin{enumerate}
+\item Fournir une interface pour la saisie de commande
+\item Redirection des entrées/sorties standards
+\item Analyser les commandes
+\begin{itemize}
+	\item substitution de noms de fichiers
+	\item substitution de variables
+	\item redirection d’entrées/sorties
+\end{itemize}
+\item Exécution de commandes
+\begin{itemize}
+\item mode synchrone
+\item mode asynchrone
+\end{itemize}
+\item Fournir un langage interprété
+\end{enumerate}
+\end{frame}
+
+
+
+\section{Bash}
+\subsection{Les console}
+\begin{frame}[fragile]{c'est quoi une console ?}
+
+La console est une interface entre votre système et vous. Elle s'appuie sur un
+interpréteur de commandes (shell en anglais), sorte de langage. Il en existe
+plusieurs dans le monde UNIX mais le plus utilisé s'appelle Bash. Il est installé par
+défaut sur probablement toutes les distributions Linux et contient des centaines de
+commandes différentes.
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Les consoles}
+
+Bash peut être utilisé directement en ligne de commande, c'est-à-dire en dehors de
+toute interface graphique (KDE, Gnome etc). Il existe aussi des interfaces graphiques. Il en existe de nombreuses : Gnome-Terminale, konsole, aterm, eterm, xterm... Leurs différences étant cosmétiques car elles utilisent finalement le même interpréteur de commande, Bash.
+
+Vous accédez ainsi à Bash si, après le démarrage du noyau Linux, vous ne vous connectez pas à un environnement graphique (KDE, Gnome...). Sa puissance est alors à son maximum car le processeur ne s'occupe pas de gérer des fenêtres. 
+
+Pour ouvrir une console, le plus simple est d'explorer le menu de l'environnement graphique à sa recherche ou bien de cliquer l'icône probablement installée dans la barre des tâches.
+\end{frame}
+
+
+\begin{frame}{Les terminaux virtuels}
+
+Que vous soyez connecté à une interface graphique ou non, il existe un moyen
+pratique d'ouvrir rapidement une ligne de commande supplémentaire. Le raccourci
+clavier est CRTL-ALT-Fx. Remplacez le x par un chiffre de 1 à 7.
+
+Exemple : \alert{CRTL-ALT-F1}. 
+
+Les 6 premiers ouvrent des terminaux virtuels (auxquels il faudra vous connecter : identifiant et mot de passe) et le 7èm ramène à l'interface graphique (si ouverte). C'est surtout pratique quand aucune interface graphique (KDE, Gnome...) n'est ouverte, vous pouvez ainsi lancer en parallèle des commandes.
+\end{frame}
+
+\begin{frame}{Le prompt}
+	Le prompt est une invite de commande. C'est le message que la console place à
+chaque début de ligne, en attendant votre commande.
+
+Exemple : \\
+\alert{luteola@localhost \textasciitilde \$}
+
+
+Ceci indique que le simple utilisateur (symbole \$) 'luteola' travaille sur l'ordinateur
+'localhost' est qu'il est dans son répertoire personnel (symbole \textasciitilde) : /home/luteola.
+
+
+\alert{root@localhost /bin \#}
+Dans cet exemple, l'administrateur (root et symbole \#) travaille dans le dossier
+/bin.
+\end{frame}
+
+
+\begin{frame}{Sensibilité à la casse}
+La console est sensible à la casse (majuscule / minuscule) ! Ainsi, ls est une
+commande alors que LS ne veut rien dire. Idem pour l'écriture des dossiers et
+fichiers. La moindre faute ou espace mal placé aura des conséquences.
+\end{frame}
+
+
+\begin{frame}{Écrire des chemins d'accès.}
+	La structure des répertoires sous Linux est pyramidale, la pointe étant appelée la
+racine. 
+
+En console, on peut bien sûr se déplacer dans ces répertoires.
+
+
+Pour séparer des répertoires dans un chemin, on utilise des slashs /, comme on le
+ferait pour une adresse Internet en fait. N'utilisez donc pas les anti-slash, comme
+vous le demanderai Windows. 
+
+Exemple : /home/george/musique.\pause
+
+Les anti-slash servent plutôt à insérer (on dit 'protéger') des caractères spéciaux ou
+des espaces. Créez 'à la souris' un répertoire "Nouveau Dossier" sur votre bureau
+(clic droit, Nouveau...) puis en console tapez cd \textasciitilde/Desktop/ et utilisez la touche
+Tabulation (qui autocomplète un chemin). 'Nouveau' et 'dossier' sont séparés par
+un anti-slash.
+\end{frame}
+
+
+\begin{frame}{Autocomplétion des commandes}
+	Bash peut "deviner" la fin d'un chemin ou d'une commande. Ceci s'opère par la touche 'tabulation'. Très pratique pour accélérer la saisie de commandes ou retrouver une syntaxe ! 
+	
+	Exemples :
+
+	Tapez up et appuyez sur 'tabulation'. Bash affiche alors la liste des commandes commençant par 'up'.
+
+	Tapez cd /bi puis 'tabulation'. Bash complète la fin du chemin s'il existe, cd /bin/ en l'occurrence.
+
+	Mais encore plus fort avec "bash\_completion", il peut même compléter lors de l'installation de logiciels.
+
+	Par exemple sur Ubuntu ou Debian si vous tapez "source /etc/bash\_completion" et qu'en suite vous tapez "aptitude install fire" puis la touche "tabulation", il va vous donné tous les logiciels disponibles qui commencent par "fire"
+\end{frame}
+
+
+\begin{frame}{Historique des commandes}
+
+En utilisant les flèches haut et bas, vous parcourez l'historique des commandes tapées sous votre login.
+
+Ou avec la commande "history" il peut vous retrouver des commandes que vous
+avez tapez le matin ou la veille.
+
+
+Exemple : \$ \alert{history} | \alert{grep} cat
+
+\alert{CTRL-R} permet également de faire une recherche rapide sur une commande.
+\end{frame}
+
+\begin{frame}{jokers}
+Vous pouvez utiliser des jokers dans une commande :
+\begin{itemize}
+\item ? représente n'importe quel caractère (a, Y, 3, @...).
+\item * représente n'importe quel chaîne de caractères (un mot, une phrase...).
+\item Exemple : ls photo* affiche la liste des fichiers ou dossiers commençant par
+\item le mot photo.
+\item *[a]* représente une chaîne contenant la lettre a.
+\item *[!a]* représente une chaîne ne contenant pas la lettre a.
+\item [abc]* représente une chaîne commençant par la lettre a,b ou c.
+\item [a-d]* représente une chaîne commençant par la lettre a, b, c ou d.
+\end{itemize}
+\end{frame}
+\section{Les principales commandes console (BASH) sous Linux}
+\begin{frame}{Commandes}
+Voici une liste des commandes console Bash les plus utilisées en routine. Certaines
+plus que d'autres. N'oubliez pas que souvent des interfaces graphiques existent
+pour ces commandes.
+\end{frame}
+\begin{frame}{Commandes de base }
+\begin{itemize}
+\item \alert{ls} : Afficher la liste des dossier et fichiers d'un répertoire.
+\item \alert{cd} : Se déplacer vers un répertoire.
+\item \alert{pwd} : Affiche le nom du répertoire courant.
+\item \alert{mkdir} : Créer un répertoire
+\item \alert{rmdir} : Supprimer un répertoire.
+\item \alert{rm} : Effacer un fichier ou un répertoire.
+\item \alert{cp} : Copier un dossier ou un répertoire.
+\item \alert{mv} : Déplacer (renommer) un dossier ou un répertoire.
+\item \alert{ln} : Créer un lien vers un fichier.
+\item \alert{touch} : Permet de changer la date d'un fichier à l'heure courante ou de créer un fichier s'il n'existe pas (touch /home/user/test).
+\item \alert{alias} : Créer un alias d'une commande ( exemple : alias rm="rm -i" )
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Manipulations de texte}
+\begin{itemize}
+\item \alert{cat} : Afficher le contenu d'un fichier texte. Concaténer des fichiers.
+\item \alert{more}, less : Afficher le contenu d'un fichier texte intelligemment.
+\item \alert{grep} : Rechercher une chaîne de caractère.
+\item \alert{sed} : Remplacer des occurrences de texte dans des fichiers.
+\item \alert{echo} : Envoyer un message texte. Par exemple vers un fichier.
+\item \alert{tail} : N’affiche que les dernières lignes d’un fichier (-n permet de spécifier le nombre de lignes à afficher).
+\item \alert{head} : Comme tail, mais affiche les N premières lignes d’un fichier (N=10 par défaut).
+\item \alert{sort} : Trier un fichier texte.
+\item \alert{uniq} : Supprime ou compte les doublons sur un fichier trier.
+\item \alert{wc} : Compte le nombre de lignes, mots et caractères.
+\item \alert{awk} : Remise en forme de données texte.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Installer des logiciels}
+\begin{itemize}
+\item \alert{urpmi} : Installer des paquetages RPM sous Mandriva.
+\item \alert{apt-get}, \alert{aptitude} : Installer des paquets DEB (Mepis, Ubuntu, Knoppix, Debian...).
+\item \alert{alien} : Convertir des paquetages RPM, DEV, Tar.Gz entre eux.
+\item \alert{emerge} : Installer des ebuilds Gentoo.
+\item \alert{up2date}, yum: Mise à jour sur Redhat.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Recherche}
+\begin{itemize}
+\item \alert{whereis}, \alert{which} : Rechercher une application.
+\item \alert{find} : Rechercher un dossier ou un fichier.
+\item \alert{locate} : Idem mais dans une base de données. Plus rapide.
+\item \alert{du} : Affiche la taille des répertoires.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Utilisateurs, droits et permissions}
+\begin{itemize}
+\item \alert{adduser}, \alert{addgroup}, \alert{passwd}, \alert{usermod} : Gestion des utilisateurs, des groupes et des mots de passe.
+\item \alert{su}, \alert{sudo} : Passer la main à l'administrateur (root) ou un autre utilisateur.
+\item \alert{chmod} : Modifier les permissions sur un fichier.
+\item \alert{chown} : Changer le propriétaire/groupe d'un fichier.
+\item \alert{chgroup} : Changer le groupe d'un fichier.
+\item \alert{chroot} : Modifier la racine. Parfois très utile.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Gestion des processus / tâches}
+\begin{itemize}
+\item \alert{ps} , \alert{top} : Voir les processus en cours.
+\item \alert{pidof} : Affiche le Process IDentifier d'une application.
+\item \alert{kill}, \alert{killall} : Tuer un processus en cours.
+\item \alert{fuser} : Afficher/tuer les processus accédant à un fichier/dossier.
+\item \alert{nice} : Fixe la priorité d'exécution d'une tâche.
+\item \alert{renice} : Modifier la priorité d'exécution d'une tâche en cours.
+\item \alert{init} : Changer de "run level" : sortir de X, rebooter, éteindre.
+\item \alert{pstree} : Afficher l'arbre généalogique des processus lancés.
+\item \alert{cron} : Planifier des tâches périodiquement (outil crontab).
+\item \alert{lsof} : listes les fichiers ouverts.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Téléchargement}
+\begin{itemize}
+\item \alert{wget}, \alert{curl} : Outils permettant de télécharger les fichiers passés en paramêtre.
+\item \alert{links} :\alert{ Navigateur} web en ligne de commande.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Archivage}
+\begin{itemize}
+\item \alert{tar} : Rassembler dans un fichier une liste de fichiers ou de répertoires.
+\item \alert{gzip}, \alert{bzip2} : Compresser un fichier au format gzip ou bzip2.
+\item \alert{zip}, \alert{unzip} : Compresser un fichier au format zip.
+\end{itemize}
+\end{frame}
+\begin{frame}{Enchaînements de commandes}
+\begin{itemize}
+\item \alert{>} \alert{>>} : Redigirer une sortie de commande vers un fichier.
+\item \alert{;} \alert{||} \alert{\&\&} : Enchaîner des commandes séquentielle.
+\item \alert{|} : Lancer des commandes simultanément via un 'pipe'.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Variables d'environnement}
+\begin{itemize}
+\item \alert{export} : Charge une variable dans l'environnement courant.( export http\_proxy=http://monproxy :3128/ )
+\item \alert{unset} : Supprime cette variable. ( unset http\_proxy )
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Administration du système}
+\begin{itemize}
+\item \alert{fdisk}, \alert{cfdisk} : Formater et partitionner un disque.
+\item \alert{lsmod} : Afficher les modules du noyau présents en mémoire.
+\item \alert{modprobe} : Manipulation de modules chargeables dans le noyau.
+\item \alert{mount}, \alert{umount} : Monter/démonter des partitions dans l'arborescence de fichiers (/etc/fstab).
+\item \alert{lspci}, \alert{lsusb} : Affiche les périphériques branchés sur ports PCI, AGP ou USB.
+\item \alert{lshw} : Liste votre matériel de manière propre.
+\item \alert{dmesg} Affiche les messages du noyau.
+\end{itemize}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Infos}
+
+  Les sources de cette présentation sont sur le dépot :
+
+  \begin{center}\url{github.com/bimade/IntroToLinux}\end{center}
+
+  Cette présentation \emph{est} sous licence
+  \href{http://creativecommons.org/licenses/by-nc-sa/4.0/}
+  {Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) }.
+
+  \begin{center}\ccbyncsa\end{center}
+
+\end{frame}
+
+{\setbeamercolor{palette primary}{fg=black, bg=yellow}
+\begin{frame}[standout]
+  Questions?
+\end{frame}
+}
+
+\appendix
+
+\begin{frame}[fragile]{FAQ}
+  A venir
+\end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+
+  \bibliography{demo}
+  \bibliographystyle{abbrv}
+
+\end{frame}
+
+\end{document}
