@@ -78,7 +78,7 @@
 \section{}
 
 \begin{frame}[fragile]{Objectifs}
-Apprendre à utiliser les commandes UNIX (bash).
+Apprendre à utiliser les commandes UNIX (bash).\\
 Apprendre à automatiser des tâches en écrivant des scripts.\\
 
 \end{frame}
@@ -105,6 +105,39 @@ Apprendre à automatiser des tâches en écrivant des scripts.\\
 \end{frame}
 
 
+\begin{frame}{Type de shell}
+\begin{itemize}
+\item \alert{Bourne Shell}  \param{sh} : Shell disponible sur toute plateforme UNIX.
+\item \alert{C shell}  \param{csh} : Shell développé par BSD.
+\item \alert{Korn shell}  \param{ksh} : Bourne Shell étendu par l’AT\&T.
+\item \alert{Bourne Again Shell} \param{bash} : Version améliorée de sh et csh. Fourni le plus souvent avec Linux.
+\item \alert{Zero Shell}  \param{zsh} : shell avec beaucoup de fonctionnalités : typage, substitution et complétion très poussées.
+\item \alert{Tenex} \param{tcsh}  : csh étendu
+\item \alert{rc} \param{rc}  : Implémentation pour UNIX du shell de Plan 9
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Utilisation du shell}
+Deux modes d’utilisation :
+\begin{itemize}
+\item interactif : en ligne de commande.
+\begin{enumerate}
+  \item Présente une invite (prompt) à l’utilisateur et attend que celui-ci tape une commande ;
+  \item Exécute * la commande tapée par l’utilisateur
+  \item Retour en $1$.
+\end{enumerate}
+\item non-interactif : scripts shell, batch
+  \begin{enumerate}
+  \item Lit une ligne du fichier
+  \item Exécute * les instructions données dans la ligne du fichier
+  \item Passe à la ligne suivante
+  \item Retour en $1$
+  \end{enumerate}
+\end{itemize}
+
+Le programme s’arrête lorsqu’il n’y a plus de ligne à lire ou lorsqu’un instruction spéciale (exit ou return) est rencontrée.
+
+\end{frame}
 
 \section{Bash}
 \subsection{Les console}
@@ -229,6 +262,51 @@ Vous pouvez utiliser des jokers dans une commande :
 \end{itemize}
 \end{frame}
 \section{Les principales commandes console (BASH) sous Linux}
+
+\begin{frame}[fragile]{syntaxe d'une commande}
+la syntaxe classique d'une commande Unix :
+
+\begin{center}
+cmd [-opt1] [-opt2] ... [--] arg1 arg2 ...
+\end{center}
+
+où :
+
+\begin{itemize}
+\item  "cmd" correspond au nom de la commande,
+\item  "-opt" correspond à une option possible,
+\item  "arg" correspond à un argument.
+\end{itemize}
+\pause
+
+Notons que les arguments sont le plus souvent un nom de fichier que la commande manipule. On peut utiliser "--" pour séparer explicitement les options des arguments quand la commande est ambiguë.
+
+Pour obtenir l'aide en ligne sur une commande, il suffit d'utiliser le "man". Pour obtenir l'aide sur la commande "cmd", il suffit de taper :
+\begin{mylisting}
+man cmd # Afficher le manuel de la commande cmd
+\end{mylisting}
+\end{frame}
+
+\begin{frame}[fragile]{Type de commmande}
+Les commandes internes sont réalisées de manière interne par le shell lui-même ; c’est-à-dire qu’il n’y a pas de création de processus
+pour exécuter la commande. Ces commandes ne possèdent pas d’exécutables associés puisqu’elles sont codées en interne au shell.
+
+Une méthode pour identifier les builtins est d’utiliser la commande interne type.
+\begin{mylisting}
+$ type cd
+cd is a shell builtin
+$ type echo
+echo is a shell builtin
+$ type ls
+ls is /bin/ls
+$ type cat
+cat is /bin/cat
+$ type gcc
+gcc is /usr/bin/gcc
+\end{mylisting}
+
+\end{frame}
+
 \begin{frame}{Commandes}
 Voici une liste des commandes console Bash les plus utilisées en routine. Certaines
 plus que d'autres. N'oubliez pas que souvent des interfaces graphiques existent
