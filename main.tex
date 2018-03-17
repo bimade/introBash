@@ -93,7 +93,7 @@ Apprendre à automatiser des tâches en écrivant des scripts.\\
 \begin{itemize}
 	\item substitution de noms de fichiers
 	\item substitution de variables
-	\item redirection d’entrées/sorties
+	\item redirection d'entrées/sorties
 \end{itemize}
 \item Exécution de commandes
 \begin{itemize}
@@ -109,7 +109,7 @@ Apprendre à automatiser des tâches en écrivant des scripts.\\
 \begin{itemize}
 \item \alert{Bourne Shell}  \param{sh} : Shell disponible sur toute plateforme UNIX.
 \item \alert{C shell}  \param{csh} : Shell développé par BSD.
-\item \alert{Korn shell}  \param{ksh} : Bourne Shell étendu par l’AT\&T.
+\item \alert{Korn shell}  \param{ksh} : Bourne Shell étendu par l'AT\&T.
 \item \alert{Bourne Again Shell} \param{bash} : Version améliorée de sh et csh. Fourni le plus souvent avec Linux.
 \item \alert{Zero Shell}  \param{zsh} : shell avec beaucoup de fonctionnalités : typage, substitution et complétion très poussées.
 \item \alert{Tenex} \param{tcsh}  : csh étendu
@@ -118,12 +118,12 @@ Apprendre à automatiser des tâches en écrivant des scripts.\\
 \end{frame}
 
 \begin{frame}{Utilisation du shell}
-Deux modes d’utilisation :
+Deux modes d'utilisation :
 \begin{itemize}
 \item interactif : en ligne de commande.
 \begin{enumerate}
-  \item Présente une invite (prompt) à l’utilisateur et attend que celui-ci tape une commande ;
-  \item Exécute * la commande tapée par l’utilisateur
+  \item Présente une invite (prompt) à l'utilisateur et attend que celui-ci tape une commande ;
+  \item Exécute * la commande tapée par l'utilisateur
   \item Retour en $1$.
 \end{enumerate}
 \item non-interactif : scripts shell, batch
@@ -135,12 +135,12 @@ Deux modes d’utilisation :
   \end{enumerate}
 \end{itemize}
 
-Le programme s’arrête lorsqu’il n’y a plus de ligne à lire ou lorsqu’un instruction spéciale (exit ou return) est rencontrée.
+Le programme s'arrête lorsqu'il n'y a plus de ligne à lire ou lorsqu'un instruction spéciale (exit ou return) est rencontrée.
 
 \end{frame}
 
 \section{Bash}
-\subsection{Les console}
+\subsection{Les consoles}
 \begin{frame}[fragile]{c'est quoi une console ?}
 
 La console est une interface entre votre système et vous. Elle s'appuie sur un
@@ -288,10 +288,10 @@ man cmd # Afficher le manuel de la commande cmd
 \end{frame}
 
 \begin{frame}[fragile]{Type de commmande}
-Les commandes internes sont réalisées de manière interne par le shell lui-même ; c’est-à-dire qu’il n’y a pas de création de processus
-pour exécuter la commande. Ces commandes ne possèdent pas d’exécutables associés puisqu’elles sont codées en interne au shell.
+Les commandes internes sont réalisées de manière interne par le shell lui-même ; c'est-à-dire qu'il n'y a pas de création de processus
+pour exécuter la commande. Ces commandes ne possèdent pas d'exécutables associés puisqu'elles sont codées en interne au shell.
 
-Une méthode pour identifier les builtins est d’utiliser la commande interne type.
+Une méthode pour identifier les builtins est d'utiliser la commande interne type.
 \begin{mylisting}
 $ type cd
 cd is a shell builtin
@@ -304,7 +304,6 @@ cat is /bin/cat
 $ type gcc
 gcc is /usr/bin/gcc
 \end{mylisting}
-
 \end{frame}
 
 \begin{frame}{Commandes}
@@ -335,8 +334,8 @@ pour ces commandes.
 \item \alert{grep} : Rechercher une chaîne de caractère.
 \item \alert{sed} : Remplacer des occurrences de texte dans des fichiers.
 \item \alert{echo} : Envoyer un message texte. Par exemple vers un fichier.
-\item \alert{tail} : N’affiche que les dernières lignes d’un fichier (-n permet de spécifier le nombre de lignes à afficher).
-\item \alert{head} : Comme tail, mais affiche les N premières lignes d’un fichier (N=10 par défaut).
+\item \alert{tail} : N'affiche que les dernières lignes d'un fichier (-n permet de spécifier le nombre de lignes à afficher).
+\item \alert{head} : Comme tail, mais affiche les N premières lignes d'un fichier (N=10 par défaut).
 \item \alert{sort} : Trier un fichier texte.
 \item \alert{uniq} : Supprime ou compte les doublons sur un fichier trier.
 \item \alert{wc} : Compte le nombre de lignes, mots et caractères.
@@ -429,6 +428,618 @@ pour ces commandes.
 \item \alert{dmesg} Affiche les messages du noyau.
 \end{itemize}
 \end{frame}
+
+\section{Programmation système}
+\subsection{Mon premiers script}
+\begin{frame}[fragile]{script}
+Un script est une suite d'instructions élémentaires qui sont exécutées de façon séquentielle (les unes après les autres) par le langage de script. Dans notre cas, on parlera du shell Bash.
+\pause 
+
+
+Pour commencer, il faut savoir qu'un script est un \alert{fichier texte} standard pouvant être créé par n'importe quel éditeur : vi, emacs, kedit, gnotepad, ou autre. 
+
+D'autre part, conventionnellement, un script commence par une ligne de commentaire contenant le nom du langage à utiliser pour interpréter ce script, soit dans notre
+cas : /bin/bash (on parle alors de "script shell").
+
+Nous allons donc commencer par écrire un simple script que l'ont va nommer
+"bonjour\_monde" et qui nous affichera "Bonjour monde !" lors de son éxecution :
+
+\begin{mylisting}
+#!/bin/sh
+echo "Bonjour, Monde !"
+echo "Un premier script est ne"
+\end{mylisting}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Execution}
+\begin{mylisting}
+[user@becane user]$ sh bonjour_monde
+\end{mylisting}
+
+Ou bien on peut le rendre exécutable avec la commande chmod comme ceci :
+\begin{mylisting}
+[user@becane user]$ chmod +x bonjour_monde
+\end{mylisting}
+Des lors nous pourrons exécuter notre script de cette façon :
+\begin{mylisting}
+[user@becane user]$ ./bonjour_monde
+\end{mylisting}
+\end{frame}
+\subsection{D. Quelques conseils concernant les commentaires}
+\begin{frame}[fragile]{Quelques conseils concernant les commentaires}
+
+Dans un script shell, est considéré comme un commentaire tout ce qui suit le
+caractère \# et ce, jusqu'à la fin de la ligne. Usez et abusez des commentaires :
+lorsque vous relirez un script six mois après l'avoir écrit, vous serez bien content de
+l'avoir documenté. 
+
+Un programme n'est jamais trop documenté, en revanche il peut
+être mal documenté ! Un commentaire est bon lorsqu'il décrit pourquoi on fait
+quelque chose, pas quand il décrit ce que l'on fait.
+
+
+Exemple :
+\begin{mylisting}
+#!/bin/sh
+# pour i parcourant tous les fichiers,
+for i in ./* ; do
+# copier le fichier vers .bak
+cp $i $i.bak
+# fin pour
+done
+\end{mylisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Les commentaires}
+
+Que fait le script ? Les commentaires ne 
+l'expliquent pas ! Ce sont de mauvais
+commentaires.
+En revanche :
+\begin{mylisting}
+#!/bin/sh
+# on veut faire une copie de tous les 
+# fichiers du repertoire courant
+for i in ./* ; do
+# sous le nom *.bak
+cp $i $i.bak
+done
+\end{mylisting}
+
+Là au moins, on sait ce qu'il se passe (il n'est pas encore important de connaître les
+commandes de ces deux fichiers).
+\end{frame}
+
+\begin{frame}[fragile]{Caractères spéciaux}
+
+\begin{itemize}
+\item \alert{tabulation, espace} : Délimiteur de mot
+\item \alert{retour chariot }: Fin de la commande à exécuter
+\item \alert{ \& }: Lance une commande en tâche de fond
+\item \alert{ ;;; }: Séparateur de commande
+\item \alert{* ? [] [ \textasciicircum ] }: Substitution de noms de fichiers
+\item \alert{\&\& ||! }: Opérateurs booléens
+\item \alert{'” \ }: Caractères de quotation
+\item \alert{<> << >> | }: Opérateurs de redirection d'entrées sorties 
+\item \alert{\$ } : Valeur d'une variable 
+\item \alert{\# } : Début de commentaires
+\item \alert{() \{\} } : Groupement de commande
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Caractères de substitution}
+\begin{itemize}
+\item \alert{*} : N'importe quelle séquence de caractères
+\item \alert{?} : N'importe quel caractère
+\item \alert{[]} : N'importe quel caractère choisi dans les caractères donnés entre crochets
+\item \alert{[ \textasciicircum ]} : n'importe quel caractère sauf ceux dans les caractères donnés entre crochets
+\item \alert{[-]} : n'importe quel caractère dans la plage de caractères donnés entre crochets
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Mots résevés}
+\begin{itemize}
+\item \alert{case, in, esac}
+\item \alert{for, in, do, done}
+\item \alert{if, then, elif , else, fi}
+\item \alert{while, do, done}
+\item \alert{until, do, done}
+\item \alert{break, continue}
+\item \alert{return, exit}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Variables}
+
+Une variable est une suite de caractères alphanumérique associée éventuellement à une valeur.
+
+Une variable doit être de la forme :
+ \begin{center}
+ [A-Za-z\_][A-Za-z\_]*,
+ \end{center}
+ par exemple, toto, TOTO, MA\_Valeur, t, sont des variables.
+
+ \pause
+ La notion de typage n'existe pas en shell, toutes les valeurs sont des chaînes de caractères, et par conséquent :
+ \begin{itemize}
+ \item il n'y a pas de déclaration de variables.
+ \item il n'y a pas de valeur numérique.
+ \end{itemize}
+ \end{frame}
+
+\begin{frame}{Variables : assignation et utilisation}
+
+\begin{itemize}
+\item Assignation de variable
+\begin{center}
+variable=valeur
+\end{center}
+\item Consultation de variable :
+\begin{center}
+\$variable ou \${variable}
+\end{center}
+\item Visualisation de toutes les variables définies :
+\begin{center}
+set
+\end{center}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Variables : destruction et protection}
+\begin{itemize}
+\item Destruction d’une variable :
+\begin{center}
+\alert{unset} variable
+\end{center}
+\item Protection d’une variable en écriture :
+\begin{center}
+\alert{readonly} variable
+\end{center}
+\item Liste des variables protégées en écriture : \alert{readonly}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Précaution sur les variables}
+Mieux vaut utiliser \${nom\_variable} que \$nom\_variable :
+
+\begin{mylisting}
+$ MOT=volume
+$ echo $MOT42
+
+$ echo ${MOT}42
+volume42
+$
+\end{mylisting}
+\end{frame}
+
+\begin{frame}[fragile]{Opérations numériques}
+
+Il n’y a pas de type ”numérique en shell”
+
+$ titi=3
+$ echo $titi
+3
+$ titi=$titi + 1
++ : not found
+$ titi=$titi+1
+$ echo $titi
+3+1
+$
+Il faut utiliser des commandes spécifiques pour (( utiliser )) les chaînes à valeur numérique (cf. \alert{expr})
+
+\end{frame}
+
+\begin{frame}[fragile]{variables d'environnement : export}
+
+Une variable définie n’est accessible que dans le shell courant. Elle n’est pas transmise aux processus fils. Pour qu’elle soit transmise aux processus fils, il faut utiliser le mot-clef export variable
+
+Soit le script affiche\_toto :
+
+echo "Le contenu de la variable TOTO est : \$TOTO"
+
+\begin{mylisting}
+$ TOTO=42
+$ echo $TOTO
+42
+$ ./affiche_toto
+Le contenu de la variable TOTO est :
+$ export TOTO
+$ ./affiche_toto
+Le contenu de la variable TOTO est : 42
+$
+$
+\end{mylisting}
+
+Une variable exportée est appelée \alert{variable d’environnement}
+
+\end{frame}
+
+\begin{frame}{Variables d'environnement}
+
+Variables d’environnement courantes utilisées par de nombreuses commandes (ainsi que par le shell).
+\begin{itemize}
+\item \alert{HOME} : Le répertoire (( maison )) de l’utilisateur 
+\item \alert{USER} : Le login utilisateur
+\item \alert{SHELL} : Le shell utilisateur
+\item \alert{PATH} : La liste des chemins dans laquelle le shell cherchera les commandes exécutables qui seront tapés sans indication de chemin
+\item \alert{TERM} : Le type de terminal
+\item \alert{PS1} : L’invite (prompt)
+\item \alert{PWD} : Le répertoire courant
+\item \alert{LANG} : Le langage utilisé
+\end{itemize}
+L’affichage des variables d’environnement se fait par la commande \alert{env}.
+\end{frame}
+
+\begin{frame}{Substitution de variables}
+\begin{itemize}
+\item \alert{\${variable:-valeur}} : utilise la valeur de la variable si elle est positionnée et est non nulle, sinon utilise la valeur donnée.
+ \item \alert{\${variable:=valeur}} : utilise la valeur de la variable si elle est positionnée et est non nulle, sinon affecte la valeur à la variable et utilise la valeur donnée.
+ \item \alert{\${variable:?valeur}} : utilise la valeur de la variable si elle est positionnée et est non nulle, sinon écrit la valeur sur l’erreur standard et fait un exit avec un statut non nul
+ \item \alert{\${variable:+valeur}} : utilise une chaîne vide si la variable est positionnée et est non nulle, sinon, utilise la valeur.
+ \item \alert{\${\#variable}} : utilise la taille de la valeur de la variable
+\end{itemize}
+\end{frame}
+
+
+ \begin{frame}{Variables prédéfinies}
+ 
+ \begin{itemize}
+ \item \alert{\$?} : Code de retour de la dernière commande exécutée
+ \item \alert{\$\$} : PID du shell en train de s’exécuter
+ \item \alert{\$!} : PID de la dernière commande lancée en tâche de fond 
+ \item \alert{\$-} : options passées au shell courant
+ \end{itemize}
+ \end{frame}
+
+\begin{frame}{Caractères d'échapement}
+’ " $\backslash$ changent la façon dont le shell interprête les caractères spéciaux
+\begin{itemize}
+\item \alert{’ (single-quote)} : le shell ignore tout caractère spéciaux entre deux ’
+\item \alert{” (double-quote)} : le shell ignore tout caractère spéciaux entre deux ”, à l’exception de \$ et $\backslash$ et ‘
+\item \alert{\ (antislash ou le backslash)} : shell ignore le caractère spécial suivant le $\backslash$
+\item \alert{‘ (backquote ou antiquote)} : le shell exécute ce qu’il y a entre deux ‘
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Variables de passage de paramètre à un script (variables positionelles)}
+Ces variables sont automatiquement affectées lors d'un appel de script suivi d'une liste de paramètres. Leurs valeurs sont récupérables dans \$1, \$2 ...\$9.
+
+\begin{itemize}
+\item \alert{\$*} : Tous les paramètres passés au script shell sous la forme de mots séparés
+\item \alert{\$@} : Tous les paramètres passés au script shell
+\item \alert{\$\#} : Le nombre de paramètres passés au script shell
+\item \alert{\$0} : Nom du script shell
+\item \alert{\$1, \$2, ...} : Les paramètres passés dans l'ordre.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Exemple}
+\begin{mylisting}
+# !/bin/sh
+# Mon programme qui affiche les parametres de 
+# la ligne de commande
+echo "* Le nom du programme est : $0"
+echo "* Le troisieme parametre est : $3"
+echo "* Le nombre de parametre est : $#"
+echo "* Tous les parametres (mots individuels) : $*"
+echo "* Tous les parametres : $@"
+exit 0
+\end{mylisting}
+\end{frame}
+\begin{frame}[fragile]{Exemple}
+\begin{mylisting}
+$ ./script2.sh un "deux" "trois quatre" cinq
+* Le nom du programme est : ./script2.sh
+* Le troisieme parametre est : trois quatre
+* Le nombre de parametre est : 4
+* Tous les parametres (mots individuels) : un deux 
+trois quatre cinq
+* Tous les parametres : un deux trois quatre cinq
+$
+$
+\end{mylisting}
+\end{frame}
+\begin{frame}[fragile]{Passage de paramètres : précaution}
+Considérons le script suivant :
+\begin{mylisting}
+# !/bin/sh
+echo $1 $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12
+exit 0
+\end{mylisting}
+
+\pause
+\begin{mylisting}
+$ ./script3 faux.sh un deux trois quatre cinq six
+sept huit neuf dix onze douze
+un deux trois quatre cinq six sept huit neuf un0 un1
+un2
+$
+\end{mylisting}
+\end{frame}
+
+\begin{frame}[fragile]{}
+\begin{mylisting}
+# !/bin/sh
+echo $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10} ${11} ${12}
+exit 0
+\end{mylisting}
+\pause
+\begin{mylisting}
+$ ./script3 vrai.sh un deux trois quatre cinq six
+sept huit neuf dix onze douze
+un deux trois quatre cinq six sept huit neuf dix onze
+douze
+$
+\end{mylisting}
+\end{frame}
+
+\subsection{tests}
+\begin{frame}[fragile]{Commandes de test : test, [ }
+\alert{test} expression ou [ expression ] permet d’évaluer une expression.
+
+\begin{itemize}
+\item Si vrai, renvoie 0, sinon, renvoie 1.
+\item S’il n’y a pas d’expression, renvoie 1 (false).
+\end{itemize}
+
+\pause
+
+\begin{itemize}
+\item \alert{-d fic} vrai si le fichier existe et est un répertoire
+\item \alert{-f fic} vrai si le fichier existe et est un fichier (ordinaire)
+\item \alert{-h fic} : vrai si le fichier existe et est un lien symbolique
+\item \alert{-x fic} : vrai si le fichier existe et est autorisé en exécution
+\item \alert{-w fic} : vrai si le fichier existe et est autorisé en écriture
+\item \alert{-r fic} : vrai si le fichier existe et est autorisé en lecture
+\item \alert{ch1 = ch2} : si les deux chaines sont identiques
+\item \alert{ch1 != ch2} : si les deux chaines sont différentes
+\end{itemize}
+\end{frame}
+
+\begin{frame}{tests}
+\begin{itemize}
+\item \alert{n1 -eq n2} : si les deux nombres sont numériquement égaux
+\item \alert{n1 -neq n2} : si les deux nombres sont numériquement inégaux
+\item \alert{n1 -lt n2} : si n1 est numériquement inférieur à n2
+\item \alert{n1 -gt n2} : si n1 est numériquement supérieur à n2
+\item \alert{n1 -le n2} : si n1 est numériquement inférieur ou égal à n2
+\item \alert{n1 -ge n2} : si n1 est numériquement supérieur ou égal à n2
+\item \alert{! exp1} : vrai si l’expression est fausse (et vice-versa)
+\item \alert{exp1 -a exp2} : vrai si les deux expressions sont vraies (AND)
+\item \alert{exp1 -o exp2} : vrai si au moins une expression est vraie (OR)
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{tests : exemple}
+\begin{mylisting}
+$ test -f fic-qui-existe
+$ echo $?
+0
+$ test -f fic-qui-n-existe-pas
+$ echo $?
+1
+$ [ 3 -lt 42 -a -x fic-executable ]
+$ echo $?
+0
+$ [ 3 -gt 42 -a -x fic-executable ]
+$ echo $?
+1
+$
+$
+\end{mylisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{Valeur de retour}
+L’exécution d’une commande modifie la variable de retour \$?. Des commandes telles que ls, cd, rm, ... modifieront la variable de retour \$? suivant que l’opération se soit bien passée ou non.
+
+Note: \alert{:} est une commande interne retournant toujours vrai (0).
+\pause
+
+\begin{mylisting}
+ls wzwzwzw
+ls : zwzwz : No such file or directory
+$ echo $?
+1
+$ ls fichier
+fichier
+$ echo $?
+0
+$ :
+$ echo $?
+0
+\end{mylisting}
+\end{frame}
+
+\begin{frame}[fragile]{Listes de commandes}
+
+Une liste de commandes peut être écrite de deux manières différentes :
+\begin{itemize}
+\item Une séquence de commande s’écrira : commande1 ; commande 2 ; \ldots
+\item ou
+\end{itemize}
+\begin{mylisting}
+commande1
+commande2
+\end{mylisting}
+
+\pause 
+Attention, chaque nouvelle commande (non interne) est exécutée dans un nouveau processus.
+
+Sous-shell : (commande1 ; commande2)
+
+Exemple : (cd repertoire ; touch toto)
+exécute la commande touch toto sans changer la valeur du répertoire initial.
+
+\end{frame}
+
+\subsection{Syntaxe algorithmique}
+\begin{frame}[fragile]{if-then-elif-else-fi}
+La syntaxe des bloques conditionnels 
+\begin{mylisting}
+if liste-commandes-1
+then liste-commandes-2
+elif liste-commandes-3
+else liste-commandes-4
+fi
+\end{mylisting}
+
+\pause
+Exemple :
+\begin{mylisting}
+if ls monfichier
+then echo "la commande ls monfichier a reussi"
+else echo "la commande ls monfichier a echoue"
+fi
+\end{mylisting}
+\end{frame}
+
+\begin{frame}[fragile]{if-then-elif-else-fi : exemple}
+
+Autre exemple :
+\begin{mylisting}
+if [ -d toto ]
+then echo "toto est un repertoire"
+elif [ -h toto ]
+then echo "toto est un lien symbolique"
+else echo "faut pousser l'investigation plus loin"
+fi
+\end{mylisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Opérateurs logiques : \&\&, ||}
+\&\&, || sont souvent utilisé pour une forme compacte et élégante.
+\pause
+
+Le ET logique :
+
+\begin{center}
+cmd1 \&\& cmd2 = if cmd1 then cmd2 fi
+\end{center}
+Si la commande 1 réussi, alors faire la commande 2.
+
+\pause
+exemple: gcc toto.c -o toto \&\& ./toto
+
+\pause
+Le OU logique :
+\begin{center}
+cmd1 || cmd2 = if ! cmd1 then cmd2 fi
+\end{center}
+Si la commande 1 a échouée, alors faire la commande 2.
+
+exemple : cat toto || touch toto
+\end{frame}
+
+\begin{frame}[fragile]{Branchement conditionnel : case-esac}
+Le branchement conditionnel \alert{case-esac} exécute la liste-commandes suivant le motif reconnu. Sa syntaxe est :
+
+\alert{case} valeur \alert{in} \\
+\param{motif)} liste-commandes ;; \\
+\alert{esac} \\
+
+Le motif à reconnaitre peut s’exprimer sous forme d’expression rationnelle utilisant les métacaractères : \param{*?[]!-|}.
+\end{frame}
+
+\begin{frame}[fragile]{Branchement conditionnel : case-esac}
+
+Exemple :
+
+\begin{mylisting}
+case $reponse in
+[Yy ][eE][sS] | [oO][uU][iI] | OK ) echo "Tu approuves" ;;
+[Nn][oO]*) echo "Tu desapprouves" ;;
+bof) echo "C'est tout comme" ;;
+pfff*) echo "Pas la peine de repondre" ;;
+*) echo "reponse idiote" ;;
+esac
+\end{mylisting}
+\end{frame}
+
+\begin{frame}{Boucle for-do-done}
+
+\alert{for} \param{variable} \alert{in} \param{liste de mots}\\
+\alert{do}\\
+liste-commandes \\
+\alert{done}
+
+La variable prend successivement les valeurs de la liste de mots, et
+pour chaque valeur, liste-commandes est exécutée.
+
+\end{frame}
+
+\begin{frame}{while-do-done}
+
+\alert{while} liste-commandes-1 \\
+\alert{do} \\
+liste-commandes-2 \\
+\alert{done}\\
+
+La valeur testée par la commande while est l’état de sortie de la dernière commande de liste-commandes-1. Si l’état de sortie est 0,
+alors le shell exécute liste-commandes-2 puis recommence la boucle.
+\end{frame}
+\begin{frame}{Until-do-done}
+
+\alert{until} liste-commandes-1\\
+\alert{do}\\
+liste-commandes-2\\
+\alert{done}\\
+
+Le shell exécute liste-commandes-2 puis teste l’état de sortie de liste-commandes-1. Si l’état de sortie est 0, alors, la boucle est recommencée.
+\end{frame}
+
+\begin{frame}{Contrôle du flux d’exécution : break, continue}
+  
+\begin{alertblock}{break ou break n}
+  permet de sortir d’une boucle for, while ou until. Si n est précisé, il indique le nombre d’imbrication concernée par le break.
+\end{alertblock}
+
+\pause
+
+\begin{alertblock}{continue n}
+permet de passer à l’itération suivante d’une boucle for, while ou until. Si n est précisé, il indique le nombre d’imbrication concernée par le continue.
+\end{alertblock}
+
+\end{frame}
+
+\begin{frame}{Les fonctions}
+
+  On peut regrouper les commandes au sein d’une fonction. Une fonction se définit de la manière suivante :
+  \begin{alertblock}
+nom\_fonction ()\\
+\{\\
+liste-commandes \\
+\}\\
+  \end{alertblock}
+Les paramètres au sein de la fonction sont accessibles via \$1, \$2,... \$@, \$\#. 
+
+L’appel d’une fonction se fait de la manière suivante :
+\begin{center}
+nom\_fonction parametre1 parametre2...
+\end{center}
+
+Une fonction doit être déclarée avant de pouvoir être exécutée.
+\end{frame}
+
+\begin{frame}{Code de retour : return, exit}
+  
+\begin{alertblock}{return n}
+Renvoie une valeur de retour pour la fonction shell.
+\end{alertblock}
+
+\begin{alertblock}{exit n}
+Provoque l’arrêt du shell courant avec un code retour de n si celui-ci est spécifié. S’il n’est pas spécifié, il s’agira de la valeur de retour de la dernière commande exécutée.
+\end{alertblock}
+\end{frame}
+
 
 \section{Conclusion}
 
